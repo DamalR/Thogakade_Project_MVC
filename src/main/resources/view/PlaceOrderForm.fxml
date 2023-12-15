@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TreeTableColumn?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<AnchorPane fx:id="pane" prefHeight="507.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.PlaceOrderFormController">
+   <children>
+      <JFXComboBox layoutX="36.0" layoutY="71.0" prefHeight="31.0" prefWidth="134.0" />
+      <Label layoutX="37.0" layoutY="43.0" text="Customer ID" />
+      <Label layoutX="34.0" layoutY="125.0" text="Item Code" />
+      <JFXComboBox layoutX="29.0" layoutY="152.0" prefHeight="31.0" prefWidth="138.0" />
+      <Label layoutX="186.0" layoutY="49.0" text="Name" />
+      <Label layoutX="184.0" layoutY="120.0" text="Description" />
+      <Label layoutX="322.0" layoutY="122.0" text="Unit Price" />
+      <Label layoutX="466.0" layoutY="125.0" text="QTY on hand" />
+      <JFXTextField layoutX="184.0" layoutY="70.0" />
+      <JFXTextField layoutX="176.0" layoutY="153.0" prefHeight="31.0" prefWidth="138.0" />
+      <JFXTextField layoutX="326.0" layoutY="153.0" prefHeight="31.0" prefWidth="128.0" />
+      <JFXTextField layoutX="466.0" layoutY="152.0" prefHeight="31.0" prefWidth="120.0" />
+      <JFXButton layoutX="494.0" layoutY="187.0" text="Add to Cart" />
+      <JFXTreeTableView layoutX="7.0" layoutY="218.0" prefHeight="224.0" prefWidth="583.0">
+         <columns>
+            <TreeTableColumn prefWidth="81.0" text="Code" />
+            <TreeTableColumn prefWidth="99.0" text="Description" />
+            <TreeTableColumn prefWidth="108.0" text="Unit Price" />
+            <TreeTableColumn prefWidth="82.0" text="QTY" />
+            <TreeTableColumn prefWidth="108.0" text="Amount" />
+            <TreeTableColumn prefWidth="104.0" text="Option" />
+         </columns>
+      </JFXTreeTableView>
+      <JFXButton layoutX="494.0" layoutY="453.0" text="Place Order" />
+      <Label layoutX="30.0" layoutY="462.0" prefHeight="31.0" prefWidth="54.0" text="Total :" />
+      <Label layoutX="81.0" layoutY="467.0" text="0.00" />
+      <JFXButton fx:id="btnBack" layoutX="30.0" layoutY="8.0" onAction="#backButtonOnAction" >
+          <graphic>
+              <ImageView fitHeight="26.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                      <Image url="@../img/01.png" />
+                  </image>
+              </ImageView>
+          </graphic>
+      </JFXButton>
+
+
+   </children>
+</AnchorPane>
