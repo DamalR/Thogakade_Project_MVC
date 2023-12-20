@@ -7,7 +7,10 @@ import com.jfoenix.controls.RecursiveTreeItem;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import db.DBConnection;
 import dto.ItemDto;
+import dto.tm.CustomerTm;
 import dto.tm.ItemTm;
+import javafx.beans.Observable;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -24,7 +27,7 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.sql.*;
 
-public class ItemFormController {
+public class ItemFormController<observableValue> {
 
     public BorderPane pane;
     @FXML
@@ -70,7 +73,25 @@ public class ItemFormController {
         colQty.setCellValueFactory(new TreeItemPropertyValueFactory<>("qty"));
         colOption.setCellValueFactory(new TreeItemPropertyValueFactory<>("btn"));
         loadItemTable();
+        tblItem.getSelectionModel().selectedItemProperty().addListener(this::changed);
     }
+
+    private void changed(Observable observableValue, TreeItem<ItemTm> oldValue, TreeItem<ItemTm> newValue) {
+        if (newValue != null && newValue.getValue() instanceof ItemTm) {
+            setData((ItemTm) newValue.getValue());
+        }
+    }
+
+
+    private void setData(ItemTm newValue) {
+        if (newValue != null) {
+            txtCode.setEditable(false);
+            txtCode.setText(newValue.getCode());
+            txtDesc.setText(newValue.getDesc());
+            txtUnitPrice.setText(String.valueOf(newValue.getUnitPrice()));
+            txtQty.setText(String.valueOf(newValue.getQty()));
+    }
+}
 
     private void loadItemTable() {
         ObservableList<ItemTm> tmList = FXCollections.observableArrayList();
@@ -168,4 +189,6 @@ public class ItemFormController {
     public void updateButtonOnAction(javafx.event.ActionEvent actionEvent) {
         
     }
+
+
 }

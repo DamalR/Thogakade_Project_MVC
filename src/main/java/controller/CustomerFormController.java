@@ -14,15 +14,20 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import dto.CustomerDto;
 import dto.tm.CustomerTm;
+import model.CustomerModel;
 
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.*;
 
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import model.impl.CustomerModelImpl;
+
 import java.io.IOException;
+import java.util.List;
 
 public class CustomerFormController {
     public TextField txtId;
@@ -39,6 +44,8 @@ public class CustomerFormController {
     public JFXButton btnReload;
     public TableColumn colOption;
     public JFXButton btnBack;
+
+    private CustomerModel customerModel = new CustomerModelImpl();
 
 
     public void initialize() throws ClassNotFoundException {
@@ -66,44 +73,35 @@ public class CustomerFormController {
 
     private void loadCustomerTable() throws ClassNotFoundException {
         ObservableList<CustomerTm> tmList = FXCollections.observableArrayList();
-        String sql = "SELECT * FROM customer";
 
         try {
-            Statement stm = DBConnection.getInstance().getConnection().createStatement();
-            ResultSet result = stm.executeQuery(sql);
+            List<CustomerDto> dtoList = customerModel.allCustomers();
 
-            while (result.next()){
+            for (CustomerDto dto : dtoList) {
                 Button btn = new Button("Delete");
                 CustomerTm c = new CustomerTm(
-                        result.getString(1),
-                        result.getString(2),
-                        result.getString(3),
-                        result.getDouble(4),
+                        dto.getId(),
+                        dto.getName(),
+                        dto.getAddress(),
+                        dto.getSalary(),
                         btn
                 );
-                btn.setOnAction(actionEvent -> {
-                    deleteCustomer(c.getId());
-                });
+
+                btn.setOnAction(actionEvent -> deleteCustomer(c.getId()));
                 tmList.add(c);
             }
 
-
             tblCustomer.setItems(tmList);
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new RuntimeException("Error loading customer table", e);
         }
-
-
-
     }
 
-    private void deleteCustomer(String id) {
-        String sql = "DELETE from customer WHERE id='"+id+"'";
 
+    private void deleteCustomer(String id) {
         try {
-            Statement stm = DBConnection.getInstance().getConnection().createStatement();
-            int result = stm.executeUpdate(sql);
-            if (result>0){
+            boolean isDeleted = customerModel.deleteCustomer(id);
+            if (isDeleted){
                 new Alert(Alert.AlertType.INFORMATION,"Customer Deleted!").show();
                 loadCustomerTable();
             }else{
@@ -117,18 +115,14 @@ public class CustomerFormController {
 
 
     public void saveButtonOnAction(ActionEvent actionEvent) throws ClassNotFoundException, SQLException {
-        CustomerDto c = new CustomerDto(txtId.getText(),
-                txtName.getText(),
-                txtAddress.getText(),
-                Double.parseDouble(txtSalary.getText())
-        );
-        String sql = "INSERT INTO customer VALUES('"+c.getId()+"','"+c.getName()+"','"+c.getAddress()+"',"+c.getSalary()+")";
-        Class.forName("com.mysql.cj.jdbc.Driver");
-
         try {
-            Statement stm = DBConnection.getInstance().getConnection().createStatement();
-            int result = stm.executeUpdate(sql);
-            if (result>0){
+            boolean isSaved = customerModel.saveCustomer(
+                    new CustomerDto(txtId.getText(),
+                            txtName.getText(),
+                            txtAddress.getText(),
+                            Double.parseDouble(txtSalary.getText())
+                    ));
+            if (isSaved){
                 new Alert(Alert.AlertType.INFORMATION,"Customer Saved!").show();
                 loadCustomerTable();
                 clearFields();
@@ -137,22 +131,19 @@ public class CustomerFormController {
             new Alert(Alert.AlertType.ERROR,"Duplicate Entry").show();
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
-        }
     }
+}
 
     public void updateButtonOnAction(ActionEvent actionEvent) {
-        CustomerDto c = new CustomerDto(txtId.getText(),
-                txtName.getText(),
-                txtAddress.getText(),
-                Double.parseDouble(txtSalary.getText())
-        );
-        String sql = "UPDATE customer SET name='"+c.getName()+"', address='"+c.getAddress()+"', salary="+c.getSalary()+" WHERE id='"+c.getId()+"'";
 
         try {
-            Statement stm = DBConnection.getInstance().getConnection().createStatement();
-            int result = stm.executeUpdate(sql);
-            if (result>0){
-                new Alert(Alert.AlertType.INFORMATION,"Customer "+c.getId()+" Updated!").show();
+           boolean isUpdated = customerModel.updateCustomer(new CustomerDto(txtId.getText(),
+                   txtName.getText(),
+                   txtAddress.getText(),
+                   Double.parseDouble(txtSalary.getText())
+           ));
+            if (isUpdated){
+                new Alert(Alert.AlertType.INFORMATION,"Customer Updated!").show();
 
                 loadCustomerTable();
                 clearFields();
